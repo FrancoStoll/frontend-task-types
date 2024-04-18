@@ -1,16 +1,17 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getTaskById } from "@/api/TaskAPI";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getTaskById, updateStatus } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 import { formatDate } from "@/utils/utils";
 import { statusTranslate } from "@/locales/es";
+import { TaskStatus } from "@/types/index";
 
 
 
 export default function TaskModalDetails() {
-
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -25,6 +26,31 @@ export default function TaskModalDetails() {
     enabled: !!taskId,
     retry: false
   })
+
+
+  const mutation = useMutation({
+    mutationFn: updateStatus,
+    onError: (err) => {
+      toast.error(err.message)
+    },
+    onSuccess: (data) => {
+      toast.success(data)
+      queryClient.invalidateQueries({ queryKey: ['project', location.pathname.split('/')[2]] })
+      queryClient.invalidateQueries({ queryKey: ['task', taskId] })
+      navigate(location.pathname, { replace: true })
+    }
+  })
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+    mutation.mutate({
+      projectId: location.pathname.split('/')[2],
+      taskId: taskId,
+      status: e.target.value as TaskStatus
+    })
+
+
+  }
+
 
 
   if (isError) {
@@ -73,8 +99,9 @@ export default function TaskModalDetails() {
                   <div className='my-5 space-y-3'>
                     <label className='font-bold'>Estado Actual: {data.status}</label>
                     <select
-                    defaultValue={data.status}
+                      defaultValue={data.status}
                       className="w-full p-3 bg-white border border-gray-300"
+                      onChange={handleChange}
                     >
                       {
                         Object.entries(statusTranslate).map(([key, value]) => (

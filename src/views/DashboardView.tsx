@@ -18,6 +18,7 @@ export const DashboardView = () => {
     queryFn: getProjects
   })
 
+
   const mutation = useMutation({
     mutationFn: deleteProject,
     onError: (err) => {

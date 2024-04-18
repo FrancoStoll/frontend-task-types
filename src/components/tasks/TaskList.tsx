@@ -13,8 +13,8 @@ type GroupedTasks = {
 
 const initialStatusGroups: GroupedTasks = {
   pending: [],
-  inProgress: [],
   onHold: [],
+  inProgress: [],
   underReview: [],
   completed: [],
 }
@@ -36,7 +36,7 @@ export const TaskList = ({ tasks }: TaskListProps) => {
     return { ...acc, [task.status]: currentGroup };
   }, initialStatusGroups)
 
-  
+
   return (
     <>
       <h2 className="text-5xl font-black my-10">Tareas</h2>
