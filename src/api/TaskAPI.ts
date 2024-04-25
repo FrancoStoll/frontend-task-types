@@ -33,6 +33,7 @@ export async function getTaskById({ projectId, taskId }: Pick<TaskAPI, 'projectI
 
     const { data } = await api.get(url)
     const response = taskSchema.safeParse(data)
+    
     if (response.success) {
       return response.data
     }
@@ -75,11 +76,11 @@ export async function deleteTask({ projectId, taskId }: Pick<TaskAPI, 'projectId
 
 export async function updateStatus({ projectId, taskId, status }: Pick<TaskAPI, 'projectId' | 'taskId' | 'status'>) {
 
- 
+
   try {
     const url = `/projects/${projectId}/tasks/${taskId}/status`
 
-    const { data } = await api.post<string>(url, {status})
+    const { data } = await api.post<string>(url, { status })
 
     return data
   } catch (error) {

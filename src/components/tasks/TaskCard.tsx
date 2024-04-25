@@ -35,6 +35,7 @@ export const TaskCard = ({ task, canEdit }: Props) => {
         <button
           className="text-xl font-bold text-slate-600 text-left"
           type="button"
+          onClick={() => navigate(`?viewTask=${task._id}`)}
         >
           {task.name}
         </button>

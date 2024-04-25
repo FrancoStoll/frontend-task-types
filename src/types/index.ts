@@ -11,6 +11,15 @@ const authSchema = z.object({
   token: z.string()
 })
 
+// User
+
+export const userSchema = authSchema.pick({
+  name: true,
+  email: true
+}).extend({
+  _id: z.string()
+})
+
 export type Auth = z.infer<typeof authSchema>
 export type UserLoginForm = Pick<Auth, 'email' | 'password'>
 export type UserRegistrationForm = Pick<Auth, 'email' | 'password' | 'name' | 'password_confirmation'>
@@ -32,19 +41,17 @@ export const taskSchema = z.object({
   status: taskStatusSchema,
   createdAt: z.string(),
   updatedAt: z.string(),
+  completedBy: z.array(z.object({
+    user: userSchema,
+    status: taskStatusSchema,
+    _id: z.string()
+  }))
 })
 
 export type Task = z.infer<typeof taskSchema>
 export type TaskFormData = Pick<Task, 'name' | 'description'>
 
-// User
 
-export const userSchema = authSchema.pick({
-  name: true,
-  email: true
-}).extend({
-  _id: z.string()
-})
 
 export type User = z.infer<typeof userSchema>
 
