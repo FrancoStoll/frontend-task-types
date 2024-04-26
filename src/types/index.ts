@@ -28,6 +28,23 @@ export type NewPasswordForm = Pick<Auth, 'password' | 'password_confirmation'>
 export type confirmToken = Pick<Auth, 'token'>
 export type RequestConfirmationCodeForm = Pick<Auth, 'email'>
 export type ForgotPasswordForm = Pick<Auth, 'email'>
+
+
+// Notes
+
+const noteSchema = z.object({
+  _id: z.string(),
+  content: z.string(),
+  createdBy: userSchema,
+  task: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type NoteFormData = Pick<Note, 'content'>
+
+export type Note = z.infer<typeof noteSchema>
+export type UserProfileForm = Pick<User, 'name' | 'email'>
+
 // Task
 
 export const taskStatusSchema = z.enum(['pending', 'onHold', 'inProgress', 'underReview', 'completed'])
@@ -45,6 +62,9 @@ export const taskSchema = z.object({
     user: userSchema,
     status: taskStatusSchema,
     _id: z.string()
+  })),
+  notes: z.array(noteSchema.extend({
+    createdBy: userSchema
   }))
 })
 
