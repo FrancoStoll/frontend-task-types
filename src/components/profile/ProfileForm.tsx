@@ -1,6 +1,9 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 import { User, UserProfileForm } from "@/types/index";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateProfile } from "@/api/ProfileAPI";
+import { toast } from "react-toastify";
 
 type Props = {
   data: User;
@@ -13,8 +16,23 @@ export default function ProfileForm({ data }: Props) {
     formState: { errors },
   } = useForm({ defaultValues: data });
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateProfile,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      toast.success(data);
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+    },
+  });
+
   const handleEditProfile: SubmitHandler<UserProfileForm> = (formData) => {
-    
+    mutation.mutate(formData);
   };
 
   return (

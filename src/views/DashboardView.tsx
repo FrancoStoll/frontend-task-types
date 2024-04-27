@@ -2,34 +2,21 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 
-import { deleteProject, getProjects } from "@/api/ProjectAPI";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useAuth } from "@/hooks/useAuth";
 import isManager from "@/utils/policies";
+import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
+import { getProjects } from "@/api/ProjectAPI";
 
 export const DashboardView = () => {
   const { data: user, isLoading: authLoading } = useAuth();
-
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
-  });
-
-  const mutation = useMutation({
-    mutationFn: deleteProject,
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      toast.success(data);
-      queryClient.invalidateQueries({
-        queryKey: ["projects"],
-      });
-    },
   });
 
   if (isLoading && authLoading)
@@ -129,7 +116,12 @@ export const DashboardView = () => {
                               <button
                                 type="button"
                                 className="block px-3 py-1 text-sm leading-6 text-red-500"
-                                onClick={() => mutation.mutate(project._id)}
+                                onClick={() =>
+                                  navigate(
+                                    location.pathname +
+                                      `?deleteProject=${project._id}`
+                                  )
+                                }
                               >
                                 Eliminar Proyecto
                               </button>
@@ -151,6 +143,8 @@ export const DashboardView = () => {
             </Link>
           </>
         )}
+
+        <DeleteProjectModal />
       </>
     );
 };
