@@ -1,4 +1,4 @@
-import { getProjectById } from "@/api/ProjectAPI";
+import { getFullProject } from "@/api/ProjectAPI";
 
 import AddTaskModal from "@/components/tasks/AddTaskModal";
 import { EditTaskData } from "@/components/tasks/EditTaskData";
@@ -16,13 +16,11 @@ export const ProjectDetailsView = () => {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["project", projectId],
-    queryFn: () => getProjectById(projectId!),
+    queryFn: () => getFullProject(projectId!),
     retry: 2,
   });
 
   const canEdit = useMemo(() => data?.manager === user?._id, [data, user]);
-
-
 
   if (isLoading && authLoading) return "Loading...";
   if (isError) return <Navigate to="/404" />;
@@ -53,7 +51,7 @@ export const ProjectDetailsView = () => {
           </nav>
         )}
 
-        <TaskList tasks={data.tasks} canEdit={canEdit}/>
+        <TaskList tasks={data.tasks} canEdit={canEdit} />
 
         {/* Modales */}
         <AddTaskModal />

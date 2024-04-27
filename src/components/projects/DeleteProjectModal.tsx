@@ -24,6 +24,7 @@ export default function DeleteProjectModal() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ defaultValues: initialValues });
   const queryClient = useQueryClient();
   const checkUserPasswordMutation = useMutation({
@@ -43,6 +44,7 @@ export default function DeleteProjectModal() {
       queryClient.invalidateQueries({
         queryKey: ["projects"],
       });
+      reset()
       navigate(location.pathname, { replace: true });
     },
   });

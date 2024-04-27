@@ -137,10 +137,15 @@ export const DashboardView = () => {
           </ul>
         ) : (
           <>
-            <p className="text-center py-20">No hay projectos aún</p>
-            <Link to="/projects/create" className="text-fuchsia-500 font-bold">
-              Crear Proyecto
-            </Link>
+            <p className="text-center py-20">
+              No hay projectos aún{" "}
+              <Link
+                to="/projects/create"
+                className="text-fuchsia-500 font-bold"
+              >
+                Crear Proyecto
+              </Link>
+            </p>
           </>
         )}
 
